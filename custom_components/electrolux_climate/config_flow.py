@@ -9,8 +9,8 @@ import voluptuous as vol
 from functools import partial
 import homeassistant.helpers.config_validation as cv
 
-from homeassistant import data_entry_flow
-from homeassistant.helpers.service_info import dhcp
+from homeassistant.data_entry_flow import FlowResult
+from homeassistant.components import dhcp
 from homeassistant.config_entries import ConfigFlow
 from homeassistant import config_entries
 
@@ -46,11 +46,11 @@ class ElectroluxClimateConfigFlow(ConfigFlow, domain=DOMAIN):
             "host": device.host[0],
         }
             
-    async def async_step_dhcp(self, discovery_info: dhcp.DhcpServiceInfo) -> data_entry_flow.FlowResult:
+    async def async_step_dhcp(self, discovery_info: dict[str, any]) -> FlowResult:
         """Handle dhcp discovery."""
 
         print('DHCP called')
-        host = discovery_info.ip
+        host = discovery_info["ip"]
         unique_id = discovery_info.macaddress.lower().replace(":", "")
         await self.async_set_unique_id(unique_id)
         self._abort_if_unique_id_configured(updates={CONF_HOST: host})
